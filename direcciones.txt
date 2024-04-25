@@ -1,0 +1,70 @@
+Calle Bolivar
+Avenida Urdaneta
+Carrera 19 de Abril
+Transversal Los Palos Grandes
+Calle 5 de Julio
+Avenida Andres Bello
+Carrera El Rosal
+Calle Los Caobos
+Avenida Libertador
+Carrera Sabana Grande
+Calle La Candelaria
+Avenida Francisco de Miranda
+Carrera Los Dos Caminos
+Calle El Paraiso
+Avenida Romulo Gallegos
+Carrera Altamira
+Transversal Las Mercedes
+Calle Los Chaguaramos
+Avenida Baralt
+Carrera La Florida
+Calle San Bernardino
+Avenida Boyaca
+Carrera Los Cortijos
+Transversal Santa Fe
+Calle Los Dos Caminos
+Avenida Sucre
+Carrera El Marques
+Calle La Castellana
+Avenida Bolivar
+Carrera Los Ruices
+Transversal El Cafetal
+Calle El Hatillo
+Avenida Los Samanes
+Carrera La Trinidad
+Calle Los Palos Grandes
+Avenida Las Mercedes
+Carrera Bello Monte
+Transversal Los Dos Caminos
+Calle Los Cortijos
+Avenida Los Palos Grandes
+Carrera El Cafetal
+Calle Los Ruices
+Avenida El Marques
+Carrera La Castellana
+Transversal La Florida
+Calle Los Samanes
+Avenida El Hatillo
+Carrera Los Palos Grandes
+Calle Bello Monte
+Avenida Los Cortijos
+Carrera Las Mercedes
+Transversal El Rosal
+Calle La Trinidad
+Avenida Los Dos Caminos
+Carrera Las Palmas
+Calle El Cafetal
+Avenida Los Ruices
+Carrera El Paraiso
+Transversal Los Caobos
+Calle Los Samanes
+Avenida La Candelaria
+Carrera El Hatillo
+Transversal Los Palos Grandes
+Calle Los Dos Caminos
+Avenida El Rosal
+Carrera Las Mercedes
+Transversal Los Ruices
+Calle El Marques
+Avenida La Castellana
+Carrera Los Samanes
