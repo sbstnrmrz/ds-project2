@@ -90,11 +90,13 @@ void productos_quick_sort(vector<producto_t> *productos, int start, int end) {
         return;
     }
 
-    char pivot = tolower(productos->at(end).descripcion[0]);
+//    char pivot = tolower(productos->at(end).descripcion[0]);
+    char *pivot = productos->at(end).descripcion;
     int i = start-1;
 
     for (int j = start; j <= end; j++) {
-        if (tolower(productos->at(j).descripcion[0]) < pivot) {
+        // tolower(productos->at(j).descripcion[0])
+        if (strcasecmp(productos->at(j).descripcion, pivot) < 0) {
             i++;
             swap(productos->at(j), productos->at(i));
         }
@@ -381,6 +383,15 @@ int obtener_tamano_binario_clientes(fstream& binario_clientes) {
     return result;
 }
 
+int obtener_tamano_binario_productos(fstream& binario_productos) {
+    binario_productos.seekg(0, ios::end);
+    int result = (int)binario_productos.tellg()/sizeof(producto_t);
+    binario_productos.clear();
+    binario_productos.seekg(0, ios::beg);
+
+    return result;
+}
+
 std::string obtener_nombre_binario_clientes(fstream& binario_clientes, int pos) {
     cliente_t cliente = {0};
     binario_clientes.seekg(pos * sizeof(cliente_t));
@@ -400,16 +411,18 @@ void binario_clientes_merge(fstream& clientes1, const char* str1, fstream& clien
     int r = 0;
 
     while (l < left_len && r < right_len) {
-        int cnt = 0;
-        while (true) {
-            char c1 = tolower(obtener_nombre_binario_clientes(clientes1, l).c_str()[cnt]);
-            char c2 = tolower(obtener_nombre_binario_clientes(clientes2, r).c_str()[cnt]);
-            if (c1 == c2) {
-                cnt++;
-                continue;
-            }
+//      int cnt = 0;
+//      while (true) {
+//          char c1 = tolower(obtener_nombre_binario_clientes(clientes1, l).c_str()[cnt]);
+//          char c2 = tolower(obtener_nombre_binario_clientes(clientes2, r).c_str()[cnt]);
+//          if (strcasecmp(obtener_nombre_binario_clientes(clientes1, l).c_str(), obtener_nombre_binario_clientes(clientes1, l).c_str()) == 0) {
+//              cnt++;
+//              continue;
+//          }
 
-            if (c1 < c2) {
+            if (strcasecmp(obtener_nombre_binario_clientes(clientes1, l).c_str(), 
+                obtener_nombre_binario_clientes(clientes2, r).c_str()) < 0) 
+            {
                 set_binario_clientes(binario_clientes, i, clientes1, l);
                 i++;
                 l++;
@@ -418,8 +431,8 @@ void binario_clientes_merge(fstream& clientes1, const char* str1, fstream& clien
                 i++;
                 r++;
             }
-            break;
-        }
+//          break;
+//      }
     }
     while (l < left_len) {
         set_binario_clientes(binario_clientes, i, clientes1, l);
@@ -763,6 +776,27 @@ int clientes_binary_search(fstream& clientes, const char *target) {
     return -1;
 }
 
+int vec_productos_binary_search(vector<producto_t> productos, const char *target) {
+    int l = 0;
+    int r = productos.size()-1;
+
+    while (l <= r) {
+        int m = (l+r)/2;
+//        char c1 = tolower(cliente.nombre[0]);
+//        char c2 = tolower(target[0]);
+
+        printf("%s = %s\n", productos.at(m).descripcion, target);
+        if (strcasecmp(productos.at(m).descripcion, target) < 0) {
+            l = (m+1);// * sizeof(cliente_t);
+        } else if (strcasecmp(productos.at(m).descripcion, target) > 0) {
+            r = (m-1);// * sizeof(cliente_t);
+        } else {
+            return m;
+        } 
+    }
+    return -1;
+}
+
 int main(int argc, char *argv[]) {
     auto t1 = std::chrono::system_clock::now();
     std::srand(std::time(nullptr));
@@ -799,11 +833,14 @@ int main(int argc, char *argv[]) {
     productos = crear_vector_producto();
 
     t1 = std::chrono::system_clock::now();
-    productos_merge_sort(&productos);
+    productos_quick_sort(&productos, 0, productos.size()-1);
     t2 = std::chrono::system_clock::now();
     elapsed_secs = t2-t1;
     float tiempo_merge = elapsed_secs.count();
     consultar_productos(productos);
+    int pos1 = vec_productos_binary_search(productos, "Cafe");
+    printf("Posicion de melon: %d\n", pos1);
+
 
     printf("Tiempo de ordenacion alfabeticamente por quicksort: %lf\n", tiempo_bubble);
     printf("Tiempo de ordenacion alfabeticamente por bubble sort: %lf\n", tiempo_quick);
@@ -814,31 +851,31 @@ int main(int argc, char *argv[]) {
 //  clientes_merge_sort(&clientes);
 //  consultar_clientes(clientes);
 
-    consultar_clientes();
-    printf("\n\n\n\n");
-    fstream clientes;
-    clientes.open("clientes.bin", ios::in | ios::out | ios::binary);
-    binario_clientes_merge_sort(clientes, 0);
-    consultar_clientes();
-    int result = clientes_binary_search(clientes, "ze miller");
-    printf("result: %d\n", result);
+//  consultar_clientes();
+//  printf("\n\n\n\n");
+//  fstream clientes;
+//  clientes.open("clientes.bin", ios::in | ios::out | ios::binary);
+//  binario_clientes_merge_sort(clientes, 0);
+//  consultar_clientes();
+//  int result = clientes_binary_search(clientes, "Emily Mitchell");
+//  printf("result: %d\n", result);
 
-    if (result == -1) {
-        printf("No se ha encontrado a Zoe Miller");
-    } else {
-        printf("Se ha encontrado a Zoe Miller en la posicion: %d ", result);
-    }
+//  if (result == -1) {
+//      printf("No se ha encontrado a Zoe Miller");
+//  } else {
+//      printf("Se ha encontrado a Zoe Miller en la posicion: %d ", result);
+//  }
 
-    vec_quick_sort(&vec, 0, vec.size()-1);
-    for (int i : vec) {
-        printf("%d ", i);
-    }
-    printf("\n");
-    int num = 4;
-    int pos = vec_binary_search(vec, num);
-    if (pos != -1) {
-        printf("element %d | pos %d\n", num, pos);
-    } else {
-        printf("element not found\n");
-    }
+//  vec_quick_sort(&vec, 0, vec.size()-1);
+//  for (int i : vec) {
+//      printf("%d ", i);
+//  }
+//  printf("\n");
+//  int num = 4;
+//  int pos = vec_binary_search(vec, num);
+//  if (pos != -1) {
+//      printf("element %d | pos %d\n", num, pos);
+//  } else {
+//      printf("element not found\n");
+//  }
 }
