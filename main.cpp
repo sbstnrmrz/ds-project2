@@ -2,11 +2,10 @@
 //               Angel Vivas       C.I:30890743
 
 #include "defs.h"
+#include <cctype>
 #include <chrono>
 #include <cstdlib>
 #include <utility>
-
-int x = 0;
 
 void log_comparission(const char* str) {
     fstream f;
@@ -228,7 +227,6 @@ void clientes_merge_sort(vector<cliente_t> *vec) {
     if (len <= 1) {
         return;
     }
-    printf("itr: %d\n", x++);
 
     int mid = len/2;
     vector<cliente_t> left_vec; 
@@ -444,8 +442,6 @@ void binario_clientes_merge_sort(fstream& binario_clientes, int itr) {
     if (len <= 1) {
         return;
     }
-
-    printf("itr: %d\n", x++);
 
     int mid = len/2;
     fstream clientes1; 
@@ -725,6 +721,48 @@ vector<cliente_t> crear_vector_clientes() {
     return clientes;
 }
 
+int vec_binary_search(vector<int> vec, int target) {
+    int l = 0;
+    int r = vec.size()-1;
+
+    while (l <= r) {
+        int m = (l+r)/2;
+        if (vec.at(m) < target) {
+            l = m+1;
+        } else if (vec.at(m) > target) {
+            r = m-1;
+        } else {
+            return m;
+        }
+    }
+    return -1;
+}
+
+int clientes_binary_search(fstream& clientes, const char *target) {
+    int len = obtener_tamano_binario_clientes(clientes);
+    int l = 0;
+    int r = len-1;
+
+    while (l <= r) {
+        cliente_t cliente = {0};
+        int m = (l+r)/2;
+        clientes.seekg(m * sizeof(cliente_t));
+        clientes.read((char *)&cliente, sizeof(cliente_t));
+
+        char c1 = tolower(cliente.nombre[0]);
+        char c2 = tolower(target[0]);
+
+        if (strcasecmp(cliente.nombre, target) < 0) {
+            l = (m+1);// * sizeof(cliente_t);
+        } else if (strcasecmp(cliente.nombre, target) > 0) {
+            r = (m-1);// * sizeof(cliente_t);
+        } else {
+            return m;
+        } 
+    }
+    return -1;
+}
+
 int main(int argc, char *argv[]) {
     auto t1 = std::chrono::system_clock::now();
     std::srand(std::time(nullptr));
@@ -782,4 +820,25 @@ int main(int argc, char *argv[]) {
     clientes.open("clientes.bin", ios::in | ios::out | ios::binary);
     binario_clientes_merge_sort(clientes, 0);
     consultar_clientes();
+    int result = clientes_binary_search(clientes, "ze miller");
+    printf("result: %d\n", result);
+
+    if (result == -1) {
+        printf("No se ha encontrado a Zoe Miller");
+    } else {
+        printf("Se ha encontrado a Zoe Miller en la posicion: %d ", result);
+    }
+
+    vec_quick_sort(&vec, 0, vec.size()-1);
+    for (int i : vec) {
+        printf("%d ", i);
+    }
+    printf("\n");
+    int num = 4;
+    int pos = vec_binary_search(vec, num);
+    if (pos != -1) {
+        printf("element %d | pos %d\n", num, pos);
+    } else {
+        printf("element not found\n");
+    }
 }
