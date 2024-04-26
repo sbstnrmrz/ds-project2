@@ -1,40 +1,8 @@
-//Participantes: Sebastian Ramirez C.I:31567908
-//               Angel Vivas       C.I:30890743
+// Participantes: 
+// Sebastian Ramirez C.I:31567908
+// Angel Vivas       C.I:30890743
 
 #include "defs.h"
-#include <cctype>
-#include <chrono>
-#include <cstdlib>
-#include <utility>
-
-void log_comparission(const char* str) {
-    fstream f;
-    f.open("log.txt", ios::app);
-    if (!f.is_open()) {
-        printf("Error guardando en log.txt\n");
-        exit(1);
-    }
-//  f.write((char*)&str, strlen(str));
-    f << str;
-
-    f.close();
-}
-
-bool check_alpha_order(char *str1, char *str2) {
-    int len1 = strlen(str1);
-    int len2 = strlen(str2);
-    int len = len1 ? len1 <= len2 : len2; 
-
-    for (int i = 0; i < len; i++) {
-        if (*str1++ < *str2++) {
-            return true;
-        } else {
-           return false; 
-        }
-    }
-
-    return false;
-}
 
 void swap_int(int *a, int *b) {
     int tmp = *a;
@@ -61,8 +29,6 @@ void swap_productos(producto_t *producto1, producto_t *producto2) {
     *producto2 = tmp;
 }
 
-int cnt = 0;
-
 void vec_quick_sort(vector<int> *vec, int start, int end) {
     if (end <= start) {
         return;
@@ -79,23 +45,20 @@ void vec_quick_sort(vector<int> *vec, int start, int end) {
     }
     i++;
     swap(vec->at(end), vec->at(i));
-    cnt++;
 
     vec_quick_sort(vec, start, i-1);
     vec_quick_sort(vec, i+1, end);
 }
 
-void productos_quick_sort(vector<producto_t> *productos, int start, int end) {
+void vec_productos_quick_sort(vector<producto_t> *productos, int start, int end) {
     if (end <= start) {
         return;
     }
 
-//    char pivot = tolower(productos->at(end).descripcion[0]);
     char *pivot = productos->at(end).descripcion;
     int i = start-1;
 
     for (int j = start; j <= end; j++) {
-        // tolower(productos->at(j).descripcion[0])
         if (strcasecmp(productos->at(j).descripcion, pivot) < 0) {
             i++;
             swap(productos->at(j), productos->at(i));
@@ -103,35 +66,12 @@ void productos_quick_sort(vector<producto_t> *productos, int start, int end) {
     }
     i++;
     swap(productos->at(end), productos->at(i));
-    cnt++;
 
-    productos_quick_sort(productos, start, i-1);
-    productos_quick_sort(productos, i+1, end);
+    vec_productos_quick_sort(productos, start, i-1);
+    vec_productos_quick_sort(productos, i+1, end);
 }
 
-void arr_quick_sort(int arr[], int start, int end) {
-    if (end <= start) {
-        return;
-    }
-
-    int pivot = arr[end];
-    int i = start-1;
-
-    for (int j = start; j <= end; j++) {
-        if (arr[j] < pivot) {
-            i++;
-            swap(arr[j], arr[i]);
-        }
-    }
-    i++;
-    swap(arr[end], arr[i]);
-    cnt++;
-
-    arr_quick_sort(arr, start, i-1);
-    arr_quick_sort(arr, i+1, end);
-}
-
-void productos_merge(vector<producto_t> *left_vec, vector<producto_t> *right_vec, vector<producto_t> *vec) {
+void vec_productos_merge(vector<producto_t> *left_vec, vector<producto_t> *right_vec, vector<producto_t> *vec) {
     int left_len = vec->size()/2;
     int right_len = vec->size() - left_len;
     int i = 0;
@@ -161,7 +101,7 @@ void productos_merge(vector<producto_t> *left_vec, vector<producto_t> *right_vec
     }
 }
 
-void productos_merge_sort(vector<producto_t> *vec) {
+void vec_productos_merge_sort(vector<producto_t> *vec) {
     int len = vec->size();
     if (len <= 1) {
         return;
@@ -179,12 +119,12 @@ void productos_merge_sort(vector<producto_t> *vec) {
             j++;
         }
     }
-    productos_merge_sort(&left_vec);
-    productos_merge_sort(&right_vec);
-    productos_merge(&left_vec, &right_vec, vec);
+    vec_productos_merge_sort(&left_vec);
+    vec_productos_merge_sort(&right_vec);
+    vec_productos_merge(&left_vec, &right_vec, vec);
 }
 
-void clientes_merge(vector<cliente_t> *left_vec, vector<cliente_t> *right_vec, vector<cliente_t> *vec) {
+void vec_clientes_merge(vector<cliente_t> *left_vec, vector<cliente_t> *right_vec, vector<cliente_t> *vec) {
     int left_len = vec->size()/2;
     int right_len = vec->size() - left_len;
     int i = 0;
@@ -224,7 +164,7 @@ void clientes_merge(vector<cliente_t> *left_vec, vector<cliente_t> *right_vec, v
     }
 }
 
-void clientes_merge_sort(vector<cliente_t> *vec) {
+void vec_clientes_merge_sort(vector<cliente_t> *vec) {
     int len = vec->size();
     if (len <= 1) {
         return;
@@ -242,9 +182,9 @@ void clientes_merge_sort(vector<cliente_t> *vec) {
             j++;
         }
     }
-    clientes_merge_sort(&left_vec);
-    clientes_merge_sort(&right_vec);
-    clientes_merge(&left_vec, &right_vec, vec);
+    vec_clientes_merge_sort(&left_vec);
+    vec_clientes_merge_sort(&right_vec);
+    vec_clientes_merge(&left_vec, &right_vec, vec);
 }
 
 void vec_merge(vector<int> *left_vec, vector<int> *right_vec, vector<int> *vec) {
@@ -402,8 +342,8 @@ std::string obtener_nombre_binario_clientes(fstream& binario_clientes, int pos) 
     return cliente.nombre;
 }
 
-void binario_clientes_merge(fstream& clientes1, const char* str1, fstream& clientes2, const char* str2, fstream& binario_clientes) {
-    int len = obtener_tamano_binario_clientes(binario_clientes);
+void clientes_merge(fstream& clientes1, const char* str1, fstream& clientes2, const char* str2, fstream& clientes) {
+    int len = obtener_tamano_binario_clientes(clientes);
     int left_len = len/2;
     int right_len = len - left_len;
     int i = 0;
@@ -411,36 +351,25 @@ void binario_clientes_merge(fstream& clientes1, const char* str1, fstream& clien
     int r = 0;
 
     while (l < left_len && r < right_len) {
-//      int cnt = 0;
-//      while (true) {
-//          char c1 = tolower(obtener_nombre_binario_clientes(clientes1, l).c_str()[cnt]);
-//          char c2 = tolower(obtener_nombre_binario_clientes(clientes2, r).c_str()[cnt]);
-//          if (strcasecmp(obtener_nombre_binario_clientes(clientes1, l).c_str(), obtener_nombre_binario_clientes(clientes1, l).c_str()) == 0) {
-//              cnt++;
-//              continue;
-//          }
-
-            if (strcasecmp(obtener_nombre_binario_clientes(clientes1, l).c_str(), 
-                obtener_nombre_binario_clientes(clientes2, r).c_str()) < 0) 
-            {
-                set_binario_clientes(binario_clientes, i, clientes1, l);
-                i++;
-                l++;
-            } else {
-                set_binario_clientes(binario_clientes, i, clientes2, r);
-                i++;
-                r++;
-            }
-//          break;
-//      }
+        if (strcasecmp(obtener_nombre_binario_clientes(clientes1, l).c_str(), 
+                       obtener_nombre_binario_clientes(clientes2, r).c_str()) < 0) 
+        {
+            set_binario_clientes(clientes, i, clientes1, l);
+            i++;
+            l++;
+        } else {
+            set_binario_clientes(clientes, i, clientes2, r);
+            i++;
+            r++;
+        }
     }
     while (l < left_len) {
-        set_binario_clientes(binario_clientes, i, clientes1, l);
+        set_binario_clientes(clientes, i, clientes1, l);
         i++;
         l++;
     }
     while (r < right_len) {
-        set_binario_clientes(binario_clientes, i, clientes2, r);
+        set_binario_clientes(clientes, i, clientes2, r);
         i++;
         r++;
     }
@@ -450,8 +379,8 @@ void binario_clientes_merge(fstream& clientes1, const char* str1, fstream& clien
     DELETE_FILE(str2);
 }
 
-void binario_clientes_merge_sort(fstream& binario_clientes, int itr) {
-    int len = obtener_tamano_binario_clientes(binario_clientes);
+void clientes_merge_sort(fstream& clientes, int itr) {
+    int len = obtener_tamano_binario_clientes(clientes);
     if (len <= 1) {
         return;
     }
@@ -475,7 +404,7 @@ void binario_clientes_merge_sort(fstream& binario_clientes, int itr) {
 
     int j = 0;
     for (int i = 0; i < len; i++) {
-        binario_clientes.read((char*)&cliente, sizeof(cliente_t));
+        clientes.read((char*)&cliente, sizeof(cliente_t));
         if (i < mid) {
             clientes1.write((char*)&cliente, sizeof(cliente_t));
         } else {
@@ -488,9 +417,9 @@ void binario_clientes_merge_sort(fstream& binario_clientes, int itr) {
     clientes1.open(str1, ios::in | ios::out | ios::binary);
     clientes2.open(str2, ios::in | ios::out | ios::binary);
 
-    binario_clientes_merge_sort(clientes1, itr);
-    binario_clientes_merge_sort(clientes2, itr);
-    binario_clientes_merge(clientes1, str1, clientes2, str2, binario_clientes);
+    clientes_merge_sort(clientes1, itr);
+    clientes_merge_sort(clientes2, itr);
+    clientes_merge(clientes1, str1, clientes2, str2, clientes);
 }
 
 void agregar_cliente() {
@@ -688,10 +617,9 @@ void consultar_productos(vector<producto_t> productos) {
 
 void print_info_cliente(cliente_t cliente) {
     printf("| %-10d | %-17s | %-15s | %-29s |\n", cliente.id,
-                                               cliente.nombre,
-                                               cliente.telefono,
-                                               cliente.direccion);
-
+                                                  cliente.nombre,
+                                                  cliente.telefono,
+                                                  cliente.direccion);
 }
 
 void print_info_producto(producto_t producto) {
@@ -782,14 +710,10 @@ int vec_productos_binary_search(vector<producto_t> productos, const char *target
 
     while (l <= r) {
         int m = (l+r)/2;
-//        char c1 = tolower(cliente.nombre[0]);
-//        char c2 = tolower(target[0]);
-
-        printf("%s = %s\n", productos.at(m).descripcion, target);
         if (strcasecmp(productos.at(m).descripcion, target) < 0) {
-            l = (m+1);// * sizeof(cliente_t);
+            l = m+1;
         } else if (strcasecmp(productos.at(m).descripcion, target) > 0) {
-            r = (m-1);// * sizeof(cliente_t);
+            r = m-1;
         } else {
             return m;
         } 
@@ -815,7 +739,7 @@ int main(int argc, char *argv[]) {
     vec.push_back(5);
     vec.push_back(10);
 
-    productos_quick_sort(&productos, 0, productos.size()-1);
+    vec_productos_quick_sort(&productos, 0, productos.size()-1);
     auto t2 = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_secs = t2-t1;
     float tiempo_bubble = elapsed_secs.count();
@@ -833,7 +757,7 @@ int main(int argc, char *argv[]) {
     productos = crear_vector_producto();
 
     t1 = std::chrono::system_clock::now();
-    productos_quick_sort(&productos, 0, productos.size()-1);
+    vec_productos_quick_sort(&productos, 0, productos.size()-1);
     t2 = std::chrono::system_clock::now();
     elapsed_secs = t2-t1;
     float tiempo_merge = elapsed_secs.count();
