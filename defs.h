@@ -1,3 +1,7 @@
+// Participantes: 
+// Sebastian Ramirez C.I:31567908
+// Angel Vivas       C.I:30890743
+
 #ifndef DEFS_H
 #define DEFS_H
 
@@ -8,7 +12,6 @@
 #include <string>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 using namespace std;
 
 #if __WIN32
@@ -60,7 +63,5 @@ void consultar_clientes();
 
 void print_info_producto(producto_t producto);
 void print_info_cliente(cliente_t cliente);
-
-bool check_str_int(const char* str);
 
 #endif
