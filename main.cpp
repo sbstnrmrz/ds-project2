@@ -54,7 +54,17 @@ std::string obtener_nombre_clientes(fstream& clientes, int pos) {
     return cliente.nombre;
 }
 
-void clientes_merge(fstream& clientes1, const char* str1, fstream& clientes2, const char* str2, fstream& clientes) {
+std::string obtener_nombre_productos(fstream& productos, int pos) {
+    producto_t producto = {0};
+    productos.seekg(pos * sizeof(producto_t));
+    productos.read((char*)&producto, sizeof(producto_t));
+    productos.clear();
+    productos.seekg(0, ios::beg);
+
+    return producto.descripcion;
+}
+
+void clientes_mezcla(fstream& clientes1, const char* str1, fstream& clientes2, const char* str2, fstream& clientes) {
     int len = obtener_tamano_clientes(clientes);
     int left_len = len/2;
     int right_len = len - left_len;
@@ -91,7 +101,7 @@ void clientes_merge(fstream& clientes1, const char* str1, fstream& clientes2, co
     DELETE_FILE(str2);
 }
 
-void clientes_merge_sort(fstream& clientes, int itr) {
+void clientes_mezcla_directa(fstream& clientes, int itr) {
     int len = obtener_tamano_clientes(clientes);
     if (len <= 1) {
         return;
@@ -129,9 +139,167 @@ void clientes_merge_sort(fstream& clientes, int itr) {
     clientes1.open(str1, ios::in | ios::out | ios::binary);
     clientes2.open(str2, ios::in | ios::out | ios::binary);
 
-    clientes_merge_sort(clientes1, itr);
-    clientes_merge_sort(clientes2, itr);
-    clientes_merge(clientes1, str1, clientes2, str2, clientes);
+    clientes_mezcla_directa(clientes1, itr);
+    clientes_mezcla_directa(clientes2, itr);
+    clientes_mezcla(clientes1, str1, clientes2, str2, clientes);
+}
+
+void clientes_mezcla_natural(fstream& clientes) {
+    int len = obtener_tamano_clientes(clientes);
+    fstream clientes1; 
+    fstream clientes2; 
+
+    cliente_t cliente = {0};
+    char str1[128] = {0};
+    char str2[128] = {0};
+
+    clientes1.open("clientes1.dat", ios::app | ios::binary);
+    for (int i = 0; i < len; i++) {
+        clientes.read((char*)&cliente, sizeof(cliente_t));
+
+        if (strcasecmp(obtener_nombre_clientes(clientes, i).c_str(), 
+            obtener_nombre_clientes(clientes, i).c_str()) < 0) 
+        {
+            clientes1.write((char*)&cliente, sizeof(cliente_t));
+        } else {
+            clientes1.write((char*)&cliente, sizeof(cliente_t));
+            clientes.read((char*)&cliente, sizeof(cliente_t));
+            clientes2.write((char*)&cliente, sizeof(cliente_t));
+            i++;
+        }
+    }
+}
+
+void vec_mezcla_natural(vector<int> *vec) {
+    int len = vec->size();
+    vector<int> vec1;
+    vector<int> vec2;
+
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    bool ordenado = false;
+    int cnt = 0;
+    while (!ordenado) {
+        printf("COMPARACION: %d < %d | ", vec->at(i), vec->at(i+1));
+        if (vec->at(i) < vec->at(i+1)) {
+            printf("condicion 1\n");
+            vec1.push_back(vec->at(i));
+            i++;
+            if (i >= vec->size()-1) {
+                vec1.push_back(vec->at(i));
+                i = 0;
+            } else {
+                continue;
+            }
+        } else {
+            printf("condicion 2\n");
+            vec1.push_back(vec->at(i));
+            printf("\n");
+            i++;
+
+            while (true) {
+                printf("n: %d\n", vec->at(i));
+                if (vec->at(i) < vec->at(i+1)) {
+                    vec2.push_back(vec->at(i));
+                    i++;
+                    if (i >= vec->size()-1) {
+                        vec2.push_back(vec->at(i));
+                        i = 0;
+                        break;
+                    } 
+                    printf("puta1\n");
+                } else { //OJO
+                    printf("puta2\n");
+                    vec2.push_back(vec->at(i));
+
+                    printf("puta2.5\n");
+                    i++;
+                    break;
+                }
+            }
+//          if (i >= vec->size()-1) {
+//              vec2.push_back(vec->at(i));
+//              i = 0;
+//          }
+
+        }
+
+        printf("bloque 1: ");
+        for (int m : vec1) {
+            printf("%d ", m);
+        }
+        printf("\n");
+
+        printf("bloque 2: ");
+        for (int m : vec2) {
+            printf("%d ", m);
+        }
+        printf("\n");
+
+
+        int l = 0;
+        int r = 0;
+
+        if (k >= vec->size()-1) {
+            k = 0;
+        }
+        while (l < vec1.size() && r < vec2.size()) {
+            printf("COMPARACION MERGE: %d < %d | ", vec1.at(l), vec2.at(r));
+
+            if (vec1.at(l) < vec2.at(r)) {
+                printf("K1: %d\n", k);
+                vec->at(k) = vec1.at(l);
+
+                l++;
+                k++;
+            } else {
+                printf("K2: %d\n", k);
+                vec->at(k) = vec2.at(r);
+
+                r++;
+                k++;
+            }
+        }
+        while (l < vec1.size()) {
+            vec->at(k) = vec1.at(l);
+            l++;
+            k++;
+        }
+        while (r < vec2.size()) {
+            vec->at(k) = vec2.at(r);
+            r++;
+            k++;
+        }
+
+        printf("\npasada %d: ", cnt);
+        printf("i: %d | k: %d\n", i, k);
+        cnt++;
+        for (int m : *vec) {
+            printf("%d ", m);
+        }
+        printf("\n\n");
+        vec1.clear();
+        vec2.clear();
+
+//      int n = 0;
+//      for (n = 0; n <= vec->size()-1; n++) {
+//          if (vec->at(n) < vec->at(n+1)) {
+//              n++;          
+//          } 
+//      }
+//      printf("n: %d\n", n);
+//      if (n == vec->size()-1) {
+//          ordenado = true;
+//          break;
+//      }
+//      break;
+    }
+    printf("vector ordenado :");
+    for (int i : *vec) {
+        printf("%d ", i);
+    }
+    printf("\n");
 }
 
 void consultar_clientes() {
@@ -274,36 +442,30 @@ int main(int argc, char *argv[]) {
     const char *str = "melon";
     printf("Binary search: %s, pos: %d\n", str, vec_productos_binary_search(vec_productos, str));
 
-//  vector<cliente_t> clientes = crear_vector_clientes();
-//  consultar_clientes();
-//  clientes_merge_sort(&clientes);
-//  consultar_clientes(clientes);
+    vector<int> vec;
+    vec.push_back(3);
+    vec.push_back(5);
+    vec.push_back(9);
+    vec.push_back(12);
+    vec.push_back(31);
+    vec.push_back(11);
+    vec.push_back(2);
+    vec.push_back(17);
+    vec.push_back(19);
+    vec.push_back(1);
+    vec.push_back(6);
+    vec.push_back(4);
+    vec.push_back(7);
+    vec.push_back(8);
 
-//  consultar_clientes();
-//  printf("\n\n\n\n");
-//  fstream clientes;
-//  clientes.open("clientes.bin", ios::in | ios::out | ios::binary);
-//  binario_clientes_merge_sort(clientes, 0);
-//  consultar_clientes();
-//  int result = clientes_binary_search(clientes, "Emily Mitchell");
-//  printf("result: %d\n", result);
+    for (int i : vec) {
+        printf("%d ", i);
+    }
+    printf("\n\n");
+    vec_mezcla_natural(&vec);
 
-//  if (result == -1) {
-//      printf("No se ha encontrado a Zoe Miller");
-//  } else {
-//      printf("Se ha encontrado a Zoe Miller en la posicion: %d ", result);
-//  }
 
-//  vec_quick_sort(&vec, 0, vec.size()-1);
-//  for (int i : vec) {
-//      printf("%d ", i);
-//  }
-//  printf("\n");
-//  int num = 4;
-//  int pos = vec_binary_search(vec, num);
-//  if (pos != -1) {
-//      printf("element %d | pos %d\n", num, pos);
-//  } else {
-//      printf("element not found\n");
-//  }
+
+
+
 }
