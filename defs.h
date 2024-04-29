@@ -30,7 +30,7 @@ using namespace std;
 #define CLEAR system("clear")
 #define SLEEP(secs) {                    \
     char str[32] = {0};                  \
-    snprintf(str, 32, "sleep %d", secs); \
+    snprintf(str, 32, "sleep %f", secs); \
     system(str);                         \
 }
 #define DELETE_FILE(file) {           \
