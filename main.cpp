@@ -182,6 +182,10 @@ void clientes_mezcla_natural(fstream& clientes) {
     clientes2.open("clientes2.bin", ios::app | ios::binary);
     while (!ordenado) {
         cliente_t cliente = {0};
+        printf("i: %d\n", i);
+        if (i == 69) {
+            exit(1);
+        }
         if (strcasecmp(obtener_nombre_clientes(clientes, i).c_str(), 
                        obtener_nombre_clientes(clientes, i+1).c_str()) < 0) 
         {
@@ -190,13 +194,12 @@ void clientes_mezcla_natural(fstream& clientes) {
             printf("nombre: %s\n", cliente.nombre);
             clientes1.write((char*)&cliente, sizeof(cliente_t));
             i++;
-            printf("i: %d\n", i);
-            if (i >= len-2) {
+
+            if (i >= len-1) {
                 printf("ASDSADASDSADASDSAADS\n");
                 clientes.seekg(i * sizeof(cliente_t));
                 clientes.read((char*)&cliente, sizeof(cliente_t));
                 clientes1.write((char*)&cliente, sizeof(cliente_t));
-//                clientes.seekg(0, ios::beg);
                 i = 0;
             } else {
                 continue;
@@ -204,7 +207,6 @@ void clientes_mezcla_natural(fstream& clientes) {
         } else {
             clientes.seekg(i * sizeof(cliente_t));
             clientes.read((char*)&cliente, sizeof(cliente_t));
-            printf("nombre: %s\n", cliente.nombre);
             clientes1.write((char*)&cliente, sizeof(cliente_t));
             i++;
             while (true) {
@@ -215,14 +217,11 @@ void clientes_mezcla_natural(fstream& clientes) {
                     clientes.read((char*)&cliente, sizeof(cliente_t));
                     clientes2.write((char*)&cliente, sizeof(cliente_t));
                     i++;
-                    printf("i: %d\n", i);
-                    if (i >= len-2) {
+                    if (i >= len-1) {
                         clientes.seekg(i * sizeof(cliente_t));
                         clientes.read((char*)&cliente, sizeof(cliente_t));
                         clientes2.write((char*)&cliente, sizeof(cliente_t));
                         i = 0;
-//                        clientes.clear();
-//                        clientes.seekg(0, ios::beg);
                         printf("ASDSADASD\n");
                         break;
                     } 
@@ -235,6 +234,9 @@ void clientes_mezcla_natural(fstream& clientes) {
                 }
             }
         }
+        if (i >= len-1) {
+            i = 0;
+        }
         int l = 0;
         int r = 0;
         if (k >= len-1) {
@@ -245,14 +247,6 @@ void clientes_mezcla_natural(fstream& clientes) {
         clientes2.close();
         clientes1.open("clientes1.bin", ios::in | ios::out | ios::binary);
         clientes2.open("clientes2.bin", ios::in | ios::out | ios::binary);
-        if (!clientes1.is_open()) {
-            printf("XD\n");
-            exit(1);
-        }
-        if (!clientes2.is_open()) {
-            printf("XD\n");
-            exit(1);
-        }
         
         consultar_clientes(clientes1);
         consultar_clientes(clientes2);
@@ -310,8 +304,8 @@ void clientes_mezcla_natural(fstream& clientes) {
             }
         }
         printf("check: %d\n", check);
-        if (check >= len-2) {
-            break;
+        if (check >= len-1) {
+            ordenado = true;
         }
 
         clientes1.open("clientes1.bin", ios::app | ios::binary);
